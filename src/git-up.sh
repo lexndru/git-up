@@ -33,7 +33,7 @@ fi
 
 # print cwd and user
 location () {
-    echo "You $(whoami) are here $CWD"
+    echo "You ($(whoami)) are here $CWD"
     echo ""
 }
 

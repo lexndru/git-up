@@ -175,6 +175,12 @@ if command -v $GITUP_SCRIPT > /dev/null 2>&1; then
             esac
         done
     fi
+else
+    if ! mv "$GITUP_SCRIPT" "$GITUP_BIN/$GITUP_SCRIPT"; then
+        echo "Cannot install script"
+        echo "Please check permissions and try again"
+        exit 1
+    fi
 fi
 
 # make executable
