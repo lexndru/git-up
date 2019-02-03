@@ -1,5 +1,5 @@
 # Git Up!
-A minimalistic wrapper for Git's `init` procedure, with a few more steps.
+A minimalistic wrapper for Git procedures (`init`, `status`, `push`).
 
 **Note**: developed for Ubuntu systems; other systems might not work out of the box.
 
@@ -7,14 +7,16 @@ A minimalistic wrapper for Git's `init` procedure, with a few more steps.
 ## Install from sources
 ```
 $ make install
+$ git-up enable
 ```
 
 
 ## Features
-- Choose `user.email` and `user.name` during the initialization procedure;
-- Create `.gitignore` file, a filled `LICENSE` file and an empty `README.md` file;
-- Recreate the git repository with one command;
-- Remove the `.git` directory and `.gitignore` file with one command;
+- Choose `user.email` and `user.name` during the repository initialization procedure;
+- Create `.gitignore` file and an optional `README.md` file with a dummy title;
+- Display information about the repository and the committer;
+- Allows different SSH keys to be used across multiple repositories;
+- Integrates with command line `git`.
 
 
 ## License
