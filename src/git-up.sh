@@ -78,15 +78,8 @@ gitup_enable () {
             echo "Please remove this script and try again"
             exit 1
         else
-            if ! cp "$USER_BIN/git" /tmp/git.bkp; then
-                echo "Aborting because cannot create backup!"
-                echo "A script with the name \"git\" already exists in $USER_BIN"
-                echo "Please remove this script and try again"
-                exit 1
-            else
-                echo "Updated script to latest version."
-                echo "A backup copy of the previous one has been stored in /tmp/git.bkp"
-            fi
+            echo "Git Up features are already enabled"
+            exit 0
         fi
     fi
 
@@ -269,6 +262,19 @@ gitup_disable () {
         fi
     else
         echo "Git Up features are not enabled. Nothing changed."
+    fi
+}
+
+# check if gitup features are enabled
+gitup_status () {
+    if [ -f "$USER_BIN/git" ]; then
+        if tail "$USER_BIN/git" -n 1 | grep "$GITUP_NOTICE" > /dev/null 2>&1; then
+            echo "Git Up features are enabled"
+            return 0
+        fi
+    else
+        echo "Git Up features are not enabled"
+        return 1
     fi
 }
 
