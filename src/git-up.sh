@@ -194,15 +194,32 @@ _init () {
         $GIT config --local user.email "\$mail"
     fi
 
-    read -p "Repository: " repo
+    read -p "Repository [n/a]: " repo
     if [ ! -z "\$repo" ]; then
         $GIT remote add origin "\$repo"
+        echo "\$repo" | grep -E "^[a-zA-Z0-9_]+@[a-zA-Z0-9\.]+\:.+/?.+\.git\$" > /dev/null 2>&1
+        if [ \$? -eq 0 ]; then
+            local pathtokey="n/a"
+            local pkey="\$HOME/.ssh/id_rsa"
+            if [ -f "\$pkey" ]; then
+                pathtokey="\$pkey"
+            fi
+            read -p "Private key [\${pathtokey}]: " privkey
+            if [ -z "\$privkey" ] && [ -f "\$pkey" ]; then
+                privkey="\$pkey"
+            elif [ ! -f "\$privkey" ]; then
+                echo "Invalid path to key: \$privkey"
+                exit 1
+            fi
+            if [ ! -z "\$privkey" ]; then
+                $GIT config --local core.sshCommand "ssh -i \$privkey -F /dev/null"
+            fi
+        fi
     fi
 }
 
 _push () {
-    shift
-    $GIT push \$@
+    shift && $GIT push \$@
 }
 
 case "\$1" in
