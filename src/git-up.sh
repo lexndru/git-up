@@ -179,11 +179,11 @@ _status () {
         echo ""
     fi
 
-    shift && $GIT status \$@
+    shift && $GIT status "\$@"
 }
 
 _init () {
-    shift && $GIT init \$@
+    shift && $GIT init "\$@"
 
     if ! [ \$? -eq 0 ]; then
         exit 1
@@ -239,21 +239,21 @@ _init () {
 }
 
 _push () {
-    shift && $GIT push \$@
+    shift && $GIT push "\$@"
 }
 
 case "\$1" in
     init) {
-        _init \$@
+        _init "\$@"
     } ;;
     status) {
-        _status \$@
+        _status "\$@"
     } ;;
     push) {
-        _push \$@
+        _push "\$@"
     } ;;
     *) {
-        $GIT \$@
+        $GIT "\$@"
     }
 esac
 
