@@ -44,13 +44,30 @@ gitup_scan () {
 
     find $dir -name .git | while read line; do
         local repo="$(realpath "$line")"
-
-        echo "[#] Found git directory"
-        echo "    dir: $repo"
-
         if [ -f "$repo/config" ]; then
-            echo "    url: $(grep url "$repo/config" | cut -d '=' -f 2)"
+            local addr="$(grep url "$repo/config" | cut -d '=' -f 2 | tr -d ' ')"
+            if [ -z "$addr" ]; then
+                echo "[ ] Found faulty git directory"
+                echo "    dir: $repo"
+                echo "    err: repository not set"
+            else
+                local safe_repo="$(echo "$addr" | sed -En 's>(https?)://(.*)@(.*)>\1://\3>gp')"
+                if [ ! -z "$safe_repo" ]; then
+                    addr="$safe_repo"
+                fi
+                if echo "$addr" | grep -E '^http:' > /dev/null 2>&1; then
+                    echo "[*] Found git directory (using insecure HTTP)"
+                elif echo "$addr" | grep -E '^https:' > /dev/null 2>&1; then
+                    echo "[*] Found git directory (using HTTPS)"
+                else
+                    echo "[*] Found git directory (using SSH)"
+                fi
+                echo "    dir: $repo"
+                echo "    url: $addr"
+            fi
         else
+            echo "[ ] Found faulty git directory"
+            echo "    dir: $repo"
             echo "    err: repository is not configured (ignore it?)"
         fi
 
@@ -128,7 +145,17 @@ _status () {
             echo " (\${ERROR}\"remote.origin.url\" is missing\${RESET})"
         else
             echo "Current directory is a repository:"
+            local safe_repo="\$(echo "\$repo" | sed -En 's>(https?)://(.*)@(.*)>\1://\3>gp')"
+            if [ ! -z "\$safe_repo" ]; then
+                repo="\$safe_repo"
+            fi
             echo " \$repo"
+            if [ ! -z "\$safe_repo" ]; then
+                echo " (\${ERROR}unsafe userinfo in URI over HTTP/S\${RESET})"
+            fi
+            if echo "\$repo" | grep -E '^http:' > /dev/null 2>&1; then
+                echo " (\${ERROR}using HTTP without SSL/TLS\${RESET})"
+            fi
         fi
 
         echo ""
