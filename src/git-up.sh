@@ -51,7 +51,7 @@ gitup_scan () {
                 echo "    dir: $repo"
                 echo "    err: repository not set"
             else
-                local safe_repo="$(echo "$addr" | sed -En 's>(https?)://(.*)@(.*)>\1://\3>gp')"
+                local safe_repo="$(echo "$addr" | sed -En 's>(https?)://(.*)@(.*)>\\1://\\3>gp')" # escape groups
                 if [ ! -z "$safe_repo" ]; then
                     addr="$safe_repo"
                 fi
@@ -123,8 +123,8 @@ gitup_enable () {
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-export ERROR='\033[0;31m'
-export RESET='\033[0m'
+export ERROR='\\033[0;31m'
+export RESET='\\033[0m'
 
 if [ ! -f $GIT ]; then
     echo "Cannot find git on system. Please install it."
@@ -145,7 +145,7 @@ _status () {
             echo " (\${ERROR}\"remote.origin.url\" is missing\${RESET})"
         else
             echo "Current directory is a repository:"
-            local safe_repo="\$(echo "\$repo" | sed -En 's>(https?)://(.*)@(.*)>\1://\3>gp')"
+            local safe_repo="\$(echo "\$repo" | sed -En 's>(https?)://(.*)@(.*)>\\1://\\3>gp')" # escape groups
             if [ ! -z "\$safe_repo" ]; then
                 repo="\$safe_repo"
             fi
